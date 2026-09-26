@@ -1,0 +1,114 @@
+﻿@model BookDisplayModel
+
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="my-4">
+    <form class="row gy-2 gx-3 align-items-center">
+
+        <div class="col-auto">
+            <label class="visually-hidden" for="genreId">Genre</label>
+            <select class="form-select" id="genreId" name="genreId">
+                <option selected>Genre</option>
+                @foreach (var genre in Model.Genres)
+                {
+
+                    <option selected="@(genre.Id == Model.GenreId)" value="@genre.Id">@genre.GenreName</option>
+                }
+
+            </select>
+        </div>
+
+        @* <div class="col-auto">
+            <label class="visually-hidden" for="autoSizingInput">Name</label>
+            <input type="text" class="form-control" id="autoSizingInput" placeholder="Jane Doe">
+        </div> *@
+        <div class="col-auto">
+            <label class="visually-hidden" for="sterm">Username</label>
+            <div class="input-group">
+                <div class="input-group-text"></div>
+                <input type="text" class="form-control" value="@Model.STerm" id="sterm" name="sterm" placeholder="Search by Title">
+            </div>
+        </div>
+
+        
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a href="/Home/Index" class="btn btn-dark">Reset</a>
+        </div>
+    </form>
+</div>
+
+<div class="w-100 d-flex flex-wrap mt-4">
+
+    @foreach (var book in Model.Books)
+    {
+        <div class="card mx-2 mb-4" style="width: 16rem;">
+            @if (string.IsNullOrEmpty(book.Image))
+            {
+                <img style="width:100%;height:240px" src="~/Images/NoImage.png" class="card-img-top" alt="...">
+
+            }
+            else
+            {
+                <img style="width:100%;height:260px" src="~/Images/@book.Image" class="card-img-top" alt="...">
+
+            }
+            <div class="card-body">
+                <h5 class="card-title">@book.BookName</h5>
+                <p class="card-text">
+                    <b>Genre: </b>@book.GenreName <br />
+                    <b>Author: </b>@book.AuthorName <br />
+                    <b>Price: </b>₹@book.Price
+                    @* <b>Quantity: </b>@book.Quantity *@
+                </p>
+                @if (book.Quantity > 0)
+                {
+                    <button type="button" onclick="add(@book.Id)" class="btn btn-primary">Add to cart</button>
+                }
+                else
+                {
+                    <span style="border: 1px solid;padding: 5px 8px;color: red;border-radius: 5px;">Out of stock</span>
+                }
+                
+            </div>
+        </div>
+    }
+
+
+</div>
+
+
+@section Scripts {
+    <script>
+        
+        async function add(bookId){
+            var usernameEl=document.getElementById("username");
+
+
+        if(usernameEl ==null ){
+                window.location.href="/Identity/Account/Login";
+            // var username=usernameEl.innerText;
+            // if(username.length<1){
+                // window.location.href="/Identity/Account/Login";
+            // }
+
+        }
+            try{
+                var response= await fetch( `/Cart/AddItem?bookId=${bookId}`);
+                console.log(response);
+                if(response.ok){
+                var result=await response.json();
+                 var cartCountEl=document.getElementById("cartCount");
+                 cartCountEl.innerHTML=result;
+                 window.location.href="#cartCount";
+                }
+            }
+            catch(err){
+                console.log(err);
+            }
+        }
+    </script>
+}

@@ -1,0 +1,34 @@
+﻿@model UpdateOrderStatusModel
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<h2>Update Order Status</h2>
+
+<a class="my-2 btn btn-primary" asp-action="AllOrders">Back</a>
+
+<form style="width:50%;" class="pt-2" asp-action="UpdateOrderStatus">
+
+    <input type="hidden" asp-for="OrderId" />
+
+    <div class="mb-2">
+       <label>Order Status</label>
+
+       <select class="form-control" asp-for="OrderStatusId" asp-items="@Model.OrderStatusList">
+            <option value="">Select Order Status</option>
+       </select>
+
+       <span class="text-danger" asp-validation-for="OrderStatusId"></span>
+
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+
+    @if (TempData["msg"]!=null)
+        {
+            <div class="text-info my-2">
+                @TempData["msg"]
+            </div>
+        }
+
+</form>
